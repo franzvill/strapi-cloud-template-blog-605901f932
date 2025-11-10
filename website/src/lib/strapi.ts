@@ -149,3 +149,65 @@ export function formatDate(dateString: string): string {
     day: 'numeric'
   }).format(date);
 }
+
+// Homepage and Global content types
+export interface HeroSection {
+  badge: string;
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+export interface CollectionSection {
+  badge: string;
+  title: string;
+  description: string;
+}
+
+export interface FooterSection {
+  brandName: string;
+  tagline: string;
+  copyrightText: string;
+}
+
+export interface NavigationLabels {
+  collection: string;
+  blog: string;
+  login: string;
+  cart: string;
+}
+
+export interface HomepageContent {
+  hero: HeroSection;
+  collectionSection: CollectionSection;
+  footer: FooterSection;
+}
+
+export interface GlobalContent {
+  siteName: string;
+  siteDescription: string;
+  navigationLabels: NavigationLabels;
+}
+
+// Get homepage content
+export async function getHomepage(): Promise<HomepageContent | null> {
+  try {
+    const response = await strapiRequest<{ data: { attributes: HomepageContent } }>('/homepage?populate=deep');
+    return response.data?.attributes || null;
+  } catch (error) {
+    console.error('Error fetching homepage:', error);
+    return null;
+  }
+}
+
+// Get global settings
+export async function getGlobal(): Promise<GlobalContent | null> {
+  try {
+    const response = await strapiRequest<{ data: { attributes: GlobalContent } }>('/global?populate=deep');
+    return response.data?.attributes || null;
+  } catch (error) {
+    console.error('Error fetching global settings:', error);
+    return null;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_sections_collections",
+  "info": {
+    "displayName": "Collection",
+    "description": "Collection section content"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Limited Edition"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "The Collection"
+    },
+    "description": {
+      "type": "text",
+      "default": "Each timepiece is a tribute to legendary clubs, crafted with Swiss precision and adorned with iconic team colors. Limited to 100 pieces per edition."
+    }
+  }
+}

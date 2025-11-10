@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_sections_heroes",
+  "info": {
+    "displayName": "Hero",
+    "description": "Hero section content"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Limited Edition"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Where Football Passion Meets Horological Excellence"
+    },
+    "subtitle": {
+      "type": "text",
+      "default": "Discover our exclusive collection of luxury timepieces inspired by legendary football clubs. Each watch is a masterpiece, limited to 100 pieces per edition."
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "Explore Collection"
+    },
+    "ctaLink": {
+      "type": "string",
+      "default": "#collection"
+    }
+  }
+}

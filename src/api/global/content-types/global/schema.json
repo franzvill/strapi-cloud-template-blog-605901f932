@@ -14,7 +14,8 @@
   "attributes": {
     "siteName": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "Kick Off Couture"
     },
     "favicon": {
       "type": "media",
@@ -24,12 +25,18 @@
     },
     "siteDescription": {
       "type": "text",
-      "required": true
+      "required": true,
+      "default": "Luxury watches inspired by legendary football clubs"
     },
     "defaultSeo": {
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
+    },
+    "navigationLabels": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.navigation-labels"
     }
   }
 }

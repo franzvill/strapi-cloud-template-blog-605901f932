@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_footers",
+  "info": {
+    "displayName": "Footer",
+    "description": "Footer section content"
+  },
+  "options": {},
+  "attributes": {
+    "brandName": {
+      "type": "string",
+      "default": "Kick Off Couture"
+    },
+    "tagline": {
+      "type": "string",
+      "default": "Where football passion meets horological excellence"
+    },
+    "copyrightText": {
+      "type": "string",
+      "default": "© 2025 Kick Off Couture. All rights reserved."
+    }
+  }
+}

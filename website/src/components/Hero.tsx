@@ -38,6 +38,7 @@ export const Hero = ({ content }: HeroProps) => {
         <div className="mb-6 animate-fade-in">
           <div className="inline-block px-6 py-2 border border-luxury-gold/30 rounded-full mb-8 backdrop-blur-sm bg-black/20">
             <span className="text-accent text-sm font-semibold tracking-[0.2em] uppercase">{hero.badge}</span>
+            HEççP
           </div>
         </div>
 

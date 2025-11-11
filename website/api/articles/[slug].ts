@@ -4,7 +4,7 @@ const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
 const STRAPI_TOKEN = process.env.STRAPI_TOKEN;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const { slug } = req.query;
+  const { slug, locale = 'en' } = req.query;
 
   if (!slug || typeof slug !== 'string') {
     return res.status(400).json({ error: 'Slug parameter is required' });
@@ -20,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const response = await fetch(
-      `${STRAPI_URL}/api/articles?filters[slug][$eq]=${slug}&populate[cover]=*&populate[author][populate]=avatar&populate[category]=*&populate[blocks]=*`,
+      `${STRAPI_URL}/api/articles?locale=${locale}&filters[slug][$eq]=${slug}&populate[cover]=*&populate[author][populate]=avatar&populate[category]=*&populate[blocks]=*`,
       { headers }
     );
 
@@ -34,9 +34,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(404).json({ error: 'Article not found' });
     }
 
-    // Cache individual articles for 30 minutes, serve stale for up to 1 hour
-    res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
-    res.setHeader('CDN-Cache-Control', 'max-age=1800');
+    // Cache for 5 minutes, serve stale for up to 10 minutes while revalidating
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+    res.setHeader('CDN-Cache-Control', 'max-age=300');
 
     res.status(200).json({ data: data.data[0] });
   } catch (error) {

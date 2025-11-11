@@ -4,6 +4,8 @@ const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
 const STRAPI_TOKEN = process.env.STRAPI_TOKEN;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const { locale = 'en' } = req.query;
+
   try {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -14,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const response = await fetch(
-      `${STRAPI_URL}/api/global?populate[navigationLabels]=*`,
+      `${STRAPI_URL}/api/global?locale=${locale}&populate[navigationLabels]=*`,
       { headers }
     );
 
@@ -24,9 +26,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const data = await response.json();
 
-    // Global settings change rarely, cache for 1 hour, serve stale for up to 24 hours
-    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
-    res.setHeader('CDN-Cache-Control', 'max-age=3600');
+    // Cache for 5 minutes, serve stale for up to 10 minutes while revalidating
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+    res.setHeader('CDN-Cache-Control', 'max-age=300');
 
     res.status(200).json(data);
   } catch (error) {

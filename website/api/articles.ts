@@ -4,7 +4,7 @@ const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
 const STRAPI_TOKEN = process.env.STRAPI_TOKEN;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const { page = '1', pageSize = '10' } = req.query;
+  const { page = '1', pageSize = '10', locale = 'en' } = req.query;
 
   try {
     const headers: HeadersInit = {
@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const response = await fetch(
-      `${STRAPI_URL}/api/articles?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}&sort=publishedAt:desc`,
+      `${STRAPI_URL}/api/articles?locale=${locale}&populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}&sort=publishedAt:desc`,
       { headers }
     );
 

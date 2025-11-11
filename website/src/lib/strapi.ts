@@ -3,8 +3,21 @@
 const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
 const API_BASE_URL = '/api';
 
+// Default locale (can be changed based on user preference)
+let currentLocale = 'en';
+
 // Verification log (check console to confirm new code is deployed)
 console.log('✅ Strapi client loaded - Using API routes:', API_BASE_URL);
+
+// Set current locale for API requests
+export function setLocale(locale: string) {
+  currentLocale = locale;
+}
+
+// Get current locale
+export function getLocale(): string {
+  return currentLocale;
+}
 
 export interface StrapiImage {
   id: number;
@@ -80,7 +93,10 @@ export interface StrapiSingleResponse<T> {
 }
 
 async function apiRequest<T>(endpoint: string): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  // Add locale parameter to the endpoint if not already present
+  const separator = endpoint.includes('?') ? '&' : '?';
+  const localeParam = endpoint.includes('locale=') ? '' : `${separator}locale=${currentLocale}`;
+  const url = `${API_BASE_URL}${endpoint}${localeParam}`;
 
   try {
     const response = await fetch(url);

@@ -4,6 +4,8 @@ const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
 const STRAPI_TOKEN = process.env.STRAPI_TOKEN;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const { locale = 'en' } = req.query;
+
   try {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -14,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const response = await fetch(
-      `${STRAPI_URL}/api/homepage?populate[hero][populate]=backgroundImage&populate[collectionSection]=*&populate[footer]=*`,
+      `${STRAPI_URL}/api/homepage?locale=${locale}&populate[hero][populate]=backgroundImage&populate[collectionSection]=*&populate[footer]=*`,
       { headers }
     );
 
@@ -24,10 +26,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const data = await response.json();
 
-    // Homepage content - cache for 1 minute, serve stale for up to 5 minutes
-    // This ensures changes appear quickly without needing cache purging
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
-    res.setHeader('CDN-Cache-Control', 'max-age=60');
+    // Cache for 5 minutes, serve stale for up to 10 minutes while revalidating
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+    res.setHeader('CDN-Cache-Control', 'max-age=300');
 
     res.status(200).json(data);
   } catch (error) {

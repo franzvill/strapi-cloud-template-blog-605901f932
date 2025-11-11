@@ -40,6 +40,7 @@ export interface SectionsHero extends Struct.ComponentSchema {
     displayName: 'Hero';
   };
   attributes: {
+    backgroundImage: Schema.Attribute.Media<'images'>;
     badge: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Limited Edition'>;
     ctaLink: Schema.Attribute.String &

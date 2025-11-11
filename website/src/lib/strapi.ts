@@ -4,8 +4,17 @@ const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
 
 // In development: use direct Strapi calls (simpler, faster)
 // In production: use API routes (cached, secure)
-const IS_DEV = import.meta.env.DEV;
+// Check both MODE and explicit env var for flexibility
+const IS_DEV = import.meta.env.MODE === 'development' || import.meta.env.VITE_USE_DIRECT_STRAPI === 'true';
 const API_BASE_URL = IS_DEV ? `${STRAPI_URL}/api` : '/api';
+
+// Debug log (remove after verifying)
+console.log('Environment:', {
+  MODE: import.meta.env.MODE,
+  IS_DEV,
+  API_BASE_URL,
+  STRAPI_URL
+});
 
 export interface StrapiImage {
   id: number;

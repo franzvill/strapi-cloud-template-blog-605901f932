@@ -3,6 +3,9 @@
 const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
 const API_BASE_URL = '/api';
 
+// Verification log (check console to confirm new code is deployed)
+console.log('✅ Strapi client loaded - Using API routes:', API_BASE_URL);
+
 export interface StrapiImage {
   id: number;
   url: string;

@@ -29,6 +29,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const urlsToPurge: string[] = [];
       const deploymentDomain = req.headers.host;
 
+      console.log(`Deployment domain: ${deploymentDomain}`);
+
       // Determine which URLs to purge based on the model
       switch (model) {
         case 'article':
@@ -63,26 +65,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           );
       }
 
+      console.log(`URLs to purge:`, urlsToPurge);
+
       // Purge cache for each URL
       const purgeResults = await Promise.allSettled(
-        urlsToPurge.map(url =>
-          fetch(`https://api.vercel.com/v1/purge?url=${encodeURIComponent(url)}&teamId=${VERCEL_TEAM_ID}`, {
+        urlsToPurge.map(async (url) => {
+          const purgeUrl = `https://api.vercel.com/v1/purge?url=${encodeURIComponent(url)}&teamId=${VERCEL_TEAM_ID}`;
+          console.log(`Purging: ${url}`);
+
+          const response = await fetch(purgeUrl, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${VERCEL_TOKEN}`,
             },
-          })
-        )
+          });
+
+          const result = await response.json();
+          console.log(`Purge result for ${url}:`, response.status, result);
+
+          if (!response.ok) {
+            throw new Error(`Purge failed: ${response.status} ${JSON.stringify(result)}`);
+          }
+
+          return { url, status: response.status, result };
+        })
       );
 
       const failures = purgeResults.filter(r => r.status === 'rejected');
+      const successes = purgeResults.filter(r => r.status === 'fulfilled');
+
+      console.log(`Purge complete: ${successes.length} succeeded, ${failures.length} failed`);
+
       if (failures.length > 0) {
-        console.error('Some cache purge requests failed:', failures);
+        console.error('Cache purge failures:', failures.map(f => f.reason));
       }
 
       return res.status(200).json({
         revalidated: true,
         purgedUrls: urlsToPurge,
+        successes: successes.length,
+        failures: failures.length,
         timestamp: new Date().toISOString(),
       });
     }

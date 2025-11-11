@@ -1,20 +1,7 @@
 // Strapi API client for fetching blog content
-// Use Vercel serverless functions for caching benefits
+// Always use /api routes (backend handles Strapi calls with caching)
 const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
-
-// In development: use direct Strapi calls (simpler, faster)
-// In production: use API routes (cached, secure)
-// Check both MODE and explicit env var for flexibility
-const IS_DEV = import.meta.env.MODE === 'development' || import.meta.env.VITE_USE_DIRECT_STRAPI === 'true';
-const API_BASE_URL = IS_DEV ? `${STRAPI_URL}/api` : '/api';
-
-// Debug log (remove after verifying)
-console.log('Environment:', {
-  MODE: import.meta.env.MODE,
-  IS_DEV,
-  API_BASE_URL,
-  STRAPI_URL
-});
+const API_BASE_URL = '/api';
 
 export interface StrapiImage {
   id: number;
@@ -109,38 +96,15 @@ async function apiRequest<T>(endpoint: string): Promise<T> {
 
 // Get all articles with pagination
 export async function getArticles(page = 1, pageSize = 10): Promise<StrapiResponse<StrapiArticle>> {
-  // In dev: use full Strapi query params
-  // In prod: API route handles the query params
-  const endpoint = IS_DEV
-    ? `/articles?populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}&sort=publishedAt:desc`
-    : `/articles?page=${page}&pageSize=${pageSize}`;
-
-  return apiRequest<StrapiResponse<StrapiArticle>>(endpoint);
+  return apiRequest<StrapiResponse<StrapiArticle>>(
+    `/articles?page=${page}&pageSize=${pageSize}`
+  );
 }
 
 // Get a single article by slug
 export async function getArticleBySlug(slug: string): Promise<StrapiSingleResponse<StrapiArticle> | null> {
   try {
-    // In dev: use full Strapi query
-    // In prod: API route handles the query
-    const endpoint = IS_DEV
-      ? `/articles?filters[slug][$eq]=${slug}&populate[cover]=*&populate[author][populate]=avatar&populate[category]=*&populate[blocks]=*`
-      : `/articles/${slug}`;
-
-    const response = IS_DEV
-      ? await apiRequest<StrapiResponse<StrapiArticle>>(endpoint)
-      : await apiRequest<StrapiSingleResponse<StrapiArticle>>(endpoint);
-
-    // In dev mode, convert array response to single response
-    if (IS_DEV) {
-      const arrayResponse = response as StrapiResponse<StrapiArticle>;
-      if (arrayResponse.data.length === 0) {
-        return null;
-      }
-      return { data: arrayResponse.data[0] };
-    }
-
-    return response as StrapiSingleResponse<StrapiArticle>;
+    return await apiRequest<StrapiSingleResponse<StrapiArticle>>(`/articles/${slug}`);
   } catch (error: any) {
     if (error.message?.includes('404')) {
       return null;
@@ -151,17 +115,14 @@ export async function getArticleBySlug(slug: string): Promise<StrapiSingleRespon
 
 // Get all categories
 export async function getCategories(): Promise<StrapiResponse<StrapiCategory>> {
-  const endpoint = IS_DEV ? `/categories?populate=*` : `/categories`;
-  return apiRequest<StrapiResponse<StrapiCategory>>(endpoint);
+  return apiRequest<StrapiResponse<StrapiCategory>>(`/categories`);
 }
 
 // Get articles by category
 export async function getArticlesByCategory(categorySlug: string, page = 1, pageSize = 10): Promise<StrapiResponse<StrapiArticle>> {
-  const endpoint = IS_DEV
-    ? `/articles?filters[category][slug][$eq]=${categorySlug}&populate=*&pagination[page]=${page}&pagination[pageSize]=${pageSize}&sort=publishedAt:desc`
-    : `/articles?category=${categorySlug}&page=${page}&pageSize=${pageSize}`;
-
-  return apiRequest<StrapiResponse<StrapiArticle>>(endpoint);
+  return apiRequest<StrapiResponse<StrapiArticle>>(
+    `/articles?category=${categorySlug}&page=${page}&pageSize=${pageSize}`
+  );
 }
 
 // Helper function to get full image URL
@@ -234,11 +195,7 @@ export interface GlobalContent {
 // Get homepage content
 export async function getHomepage(): Promise<HomepageContent | null> {
   try {
-    const endpoint = IS_DEV
-      ? `/homepage?populate[hero][populate]=backgroundImage&populate[collectionSection]=*&populate[footer]=*`
-      : `/homepage`;
-
-    const response = await apiRequest<{ data: HomepageContent }>(endpoint);
+    const response = await apiRequest<{ data: HomepageContent }>('/homepage');
     return response.data || null;
   } catch (error) {
     console.error('Error fetching homepage:', error);
@@ -249,11 +206,7 @@ export async function getHomepage(): Promise<HomepageContent | null> {
 // Get global settings
 export async function getGlobal(): Promise<GlobalContent | null> {
   try {
-    const endpoint = IS_DEV
-      ? `/global?populate[navigationLabels]=*`
-      : `/global`;
-
-    const response = await apiRequest<{ data: GlobalContent }>(endpoint);
+    const response = await apiRequest<{ data: GlobalContent }>('/global');
     return response.data || null;
   } catch (error) {
     console.error('Error fetching global settings:', error);

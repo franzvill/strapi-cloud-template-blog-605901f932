@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product_cards",
+  "info": {
+    "singularName": "product-card",
+    "pluralName": "product-cards",
+    "displayName": "Product Card",
+    "description": "Cards to display on product pages"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "productId": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

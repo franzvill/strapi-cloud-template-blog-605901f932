@@ -45,6 +45,16 @@
       },
       "component": "sections.card",
       "repeatable": true
+    },
+    "collectionCTA": {
+      "type": "component",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "sections.collection-cta",
+      "repeatable": false
     }
   }
 }

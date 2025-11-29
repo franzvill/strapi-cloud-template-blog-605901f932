@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product_galleries",
+  "info": {
+    "singularName": "product-gallery",
+    "pluralName": "product-galleries",
+    "displayName": "Product Gallery",
+    "description": "Image galleries for product pages"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "productId": {
+      "type": "string",
+      "required": true
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}
